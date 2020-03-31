@@ -29,15 +29,17 @@ var $box = (function(){
     var isMoving = false;
     console.log(oNavlist)
     function next() {
+      console.log("1234")
       if (isMoving) {
         return;
       }
       isMoving = true;
       index++;
+      navmove();
       animate(slider, {
         left: -1200 * index
       }, function () {
-        if (index == 7) {
+        if (index == 5) {
           slider.style.left = '-1200px';
           index = 1;
         }
@@ -51,6 +53,7 @@ var $box = (function(){
       }
       isMoving = true;
       index--;
+      navmove();
       animate(slider, {
         left: -1200* index
       }, function () {
@@ -100,6 +103,19 @@ var $box = (function(){
         return getComputedStyle(obj, null)[attr];
       }
     }
+    //图片切换时按钮样式跟着切换
+    function navmove() {
+      for (var i = 0; i < oNavlist.length; i++) {
+        oNavlist[i].className = "";
+      }
+      if (index > 6) {
+        oNavlist[0].className = "active";
+      } else if (index <= 0) {
+        oNavlist[6].className = "active";
+      } else {
+        oNavlist[index - 1].className = "active";
+      }
+    }
     function show(){
       box.onmouseover = function () {
         animate(left, {
@@ -119,16 +135,15 @@ var $box = (function(){
         })
         timer = setInterval(next, 3000); //图片开始接着滚动
       }
-      right.onclick = next;
-      left.onclick = prev;
+      right.click(next);
+      left.click(prev) ;
 
-
-      
       //按钮点击切换事件
       for (var i = 0; i < oNavlist.length; i++) {
         oNavlist[i].index = i;
         oNavlist[i].onclick = function () {
           index = this.index + 1;
+          navmove();
           animate(slider, {
             left: -1200 * index
           });
