@@ -1,5 +1,6 @@
 var $box = (function(){
-  var html = ''
+  var box = $("#box");
+  var $html = ''
     +'<div class="slider" id="slider">'
       +'<div class="slide"><img src="img/b5.png" alt=""></div>'
       +'<div class="slide"><img src="img/b1.png" alt=""></div>'
@@ -18,95 +19,49 @@ var $box = (function(){
       +'<li>4</li>'
       +'<li>5</li>'
     +'</ul>';
-    function show(){
-      var box = $('#box');
-      console.log(box);
-      box.append(html);
-      var slider = document.getElementById('slider');
-      var left = document.getElementById('left');
-      var right = document.getElementById('right');
-      var oNavlist = document.getElementById('navs').children;
-      var index = 1; //打开页面生效的图片的下标为1
-      var timer;
-      var isMoving = false;
-      box.onmouseover = function () {
-        animate(left, {
-          opacity: 0.6
-        })
-        animate(right, {
-          opacity: 0.6
-        })
-        clearInterval(timer); //图片停止滚动
+    box.append($html);
+    var slider = document.getElementById('slider');
+    var left = document.getElementById('left');
+    var right = document.getElementById('right');
+    var oNavlist = document.getElementById('navs').children;
+    var index = 1; //打开页面生效的图片的下标为1
+    var timer;
+    var isMoving = false;
+    console.log(oNavlist)
+    function next() {
+      if (isMoving) {
+        return;
       }
-      box.onmouseout = function () {
-        animate(left, {
-          opacity: 0
-        })
-        animate(right, {
-          opacity: 0
-        })
-        timer = setInterval(next, 3000); //图片开始接着滚动
-      }
-      right.onclick = next;
-      left.onclick = prev;
-
-      function next() {
-        if (isMoving) {
-          return;
+      isMoving = true;
+      index++;
+      animate(slider, {
+        left: -1200 * index
+      }, function () {
+        if (index == 7) {
+          slider.style.left = '-1200px';
+          index = 1;
         }
-        isMoving = true;
-        index++;
-        animate(slider, {
-          left: -1200 * index
-        }, function () {
-          if (index == 7) {
-            slider.style.left = '-800px';
-            index = 1;
-          }
-          isMoving = false;
-        });
-      }
+        isMoving = false;
+      });
+    }
 
-      function prev() {
-        if (isMoving) {
-          return;
+    function prev() {
+      if (isMoving) {
+        return;
+      }
+      isMoving = true;
+      index--;
+      animate(slider, {
+        left: -1200* index
+      }, function () {
+        if (index == 0) {
+          slider.style.left = '-7200px';
+          index = 5;
         }
-        isMoving = true;
-        index--;
-        animate(slider, {
-          left: -1200* index
-        }, function () {
-          if (index == 0) {
-            slider.style.left = '-4800px';
-            index = 5;
-          }
-          isMoving = false;
-        });
-      }
-      //按钮点击切换事件
-      for (var i = 0; i < oNavlist.length; i++) {
-        oNavlist[i].index = i;
-        oNavlist[i].onclick = function () {
-          index = this.index + 1;
-          animate(slider, {
-            left: -1200 * index
-          });
-        }
-
-      }
-      //页面打开时自动滚动切换
-      timer = setInterval(next, 2000);
-
-      function getStyle(obj, attr) {
-      if (obj.currentStyle) {
-        return obj.currentStyle[attr];
-      }
-      else {
-        return getComputedStyle(obj, null)[attr];
-      }
-      }
-
-      function animate(obj, json, callback) {
+        isMoving = false;
+      });
+    }
+    function animate(obj, json, callback) {
       clearInterval(obj.timer);
       obj.timer = setInterval(function () {
         var flag = true;
@@ -136,7 +91,54 @@ var $box = (function(){
           callback && callback(); //如果回调函数存在，就调用回调函数
         }
       }, 30);
+    }
+    function getStyle(obj, attr) {
+      if (obj.currentStyle) {
+        return obj.currentStyle[attr];
       }
+      else {
+        return getComputedStyle(obj, null)[attr];
+      }
+    }
+    function show(){
+      box.onmouseover = function () {
+        animate(left, {
+          opacity: 0.6
+        })
+        animate(right, {
+          opacity: 0.6
+        })
+        clearInterval(timer); //图片停止滚动
+      }
+      box.onmouseout = function () {
+        animate(left, {
+          opacity: 0
+        })
+        animate(right, {
+          opacity: 0
+        })
+        timer = setInterval(next, 3000); //图片开始接着滚动
+      }
+      right.onclick = next;
+      left.onclick = prev;
+
+
+      
+      //按钮点击切换事件
+      for (var i = 0; i < oNavlist.length; i++) {
+        oNavlist[i].index = i;
+        oNavlist[i].onclick = function () {
+          index = this.index + 1;
+          animate(slider, {
+            left: -1200 * index
+          });
+        }
+
+      }
+      //页面打开时自动滚动切换
+      timer = setInterval(next, 2000);
+
+      
     }
     return{
       show:show
